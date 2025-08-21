@@ -454,18 +454,6 @@ Beyond Wave 5, 0G-VOE aims to become the go-to analytics platform for the 0G eco
 - **INFT Expansion**: Tokenize advanced AI models and dashboards as INFTs, enabling trading and collaboration.
 - **Global Adoption**: Position 0G-VOE as a cornerstone of decentralized AI analytics, driving adoption across Web3 communities.
 
----
-
-## Evaluation Criteria (WaveHack Alignment)
-
-- **0G Tech Stack (30%)**: Fully utilizes 0G Chain, Compute, Storage, and DA, with seamless integration across waves.
-- **Creativity and UX (15%)**: Degen-style UI with gamified features, interactive charts, and animations creates an engaging experience.
-- **Real Use Case and Scalability (10%)**: Addresses the need for transparent blockchain analytics with scalable infrastructure via 0G DA.
-- **Vision and Roadmap (10%)**: Clear, iterative five-wave plan with measurable milestones and ecosystem focus.
-- **Working Demo and Functionality (30%)**: Delivers functional demos in Waves 1–3, scaling to a production-ready app by Wave 5.
-
----
-
 ## Acknowledgments
 
 Thanks to the 0G Team for providing a good documentation  and infrastructure and invaluable support during the WaveHack.
