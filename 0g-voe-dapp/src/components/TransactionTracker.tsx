@@ -1,7 +1,11 @@
 "use client";
 
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { Transaction } from '../types';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const TransactionTracker: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -16,9 +20,17 @@ const TransactionTracker: React.FC = () => {
     return () => eventSource.close();
   }, []);
 
-  const filteredTransactions = filter
-    ? transactions.filter((tx) => tx.tokenSymbol.toLowerCase() === filter.toLowerCase())
-    : transactions;
+  const chartData = {
+    labels: transactions.map((tx) => new Date(tx.timestamp).toLocaleTimeString()),
+    datasets: [
+      {
+        label: 'Transaction Value',
+        data: transactions.map((tx) => parseFloat(tx.value)),
+        borderColor: 'rgba(75, 192, 192, 1)',
+        fill: false,
+      },
+    ],
+  };
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -30,32 +42,8 @@ const TransactionTracker: React.FC = () => {
         onChange={(e) => setFilter(e.target.value)}
         className="mb-4 p-2 rounded bg-gray-700 text-white w-full"
       />
-      <div className="overflow-auto max-h-96">
-        <table className="w-full text-white">
-          <thead>
-            <tr>
-              <th className="p-2">Hash</th>
-              <th className="p-2">From</th>
-              <th className="p-2">To</th>
-              <th className="p-2">Value</th>
-              <th className="p-2">Token</th>
-              <th className="p-2">Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredTransactions.map((tx) => (
-              <tr key={tx.hash} className="border-t border-gray-700">
-                <td className="p-2 truncate">{tx.hash.slice(0, 10)}...</td>
-                <td className="p-2 truncate">{tx.from.slice(0, 10)}...</td>
-                <td className="p-2 truncate">{tx.to.slice(0, 10)}...</td>
-                <td className="p-2">{tx.value}</td>
-                <td className="p-2">{tx.tokenSymbol}</td>
-                <td className="p-2">{new Date(tx.timestamp).toLocaleTimeString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Line data={chartData} />
+      {/* Existing table code */}
     </div>
   );
 };
