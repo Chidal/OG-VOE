@@ -7,6 +7,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ClientWagmiProvider>{children}</ClientWagmiProvider>
       </body>
-    </html>
-  );
+    </html>
+  );
 }

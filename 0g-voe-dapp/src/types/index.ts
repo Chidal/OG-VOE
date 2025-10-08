@@ -3,14 +3,14 @@ export interface Transaction {
     from: string;
     to: string;
     value: string;
-    tokenSymbol: string;
-    timestamp: string;
+    token: string;
+    timestamp: number;
 }
 
 export interface Block {
     number: number;
     hash: string;
-    timestamp: string;
+    timestamp: number;
     gasUsed: string;
     transactionCount: number;
 }
@@ -28,4 +28,14 @@ export interface AIInsight {
     message: string;
     timestamp: string;
     confidence?: number;
+}
+
+
+export interface EventLog {
+  id: string;
+  transactionHash: string;
+  data: string;
+  timestamp: number;
+  eventName?: string;
+  params?: Record<string, string>;
 }
