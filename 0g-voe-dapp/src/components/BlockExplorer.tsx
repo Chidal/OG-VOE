@@ -1,60 +1,72 @@
 "use client";
 
-import { Line, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { useEffect, useState } from 'react';
-import { motion, Variants } from 'framer-motion'; // Import Variants
+import { motion } from 'framer-motion';
 import { Block } from '../types';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-// Explicitly type fadeIn as Variants
-const fadeIn: Variants = {
+const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: 'easeOut', // Valid easing function
-    },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
 const BlockExplorer: React.FC = () => {
   const [blocks, setBlocks] = useState<Block[]>([]);
 
   useEffect(() => {
-    const eventSource = new EventSource('/api/events');
-    eventSource.onmessage = (event) => {
-      const newBlock: Block = JSON.parse(event.data);
-      setBlocks((prev) => [newBlock, ...prev].slice(0, 50));
+    const ws = new WebSocket('ws://localhost:3001');
+    ws.onmessage = (event) => {
+      try {
+        const newBlock: Block = JSON.parse(event.data);
+        setBlocks((prev) => [newBlock, ...prev].slice(0, 50));
+      } catch (error) {
+        console.error('WebSocket parsing error:', error);
+      }
     };
-    return () => eventSource.close();
+    ws.onerror = () => {
+      console.error('WebSocket error');
+      ws.close();
+    };
+    return () => ws.close();
   }, []);
 
-  const gasFees = blocks.map(() => (Math.random() * 0.01).toFixed(4));
-  const gasChartData = {
-    labels: blocks.map((block) => block.number.toString()),
+  // Feature 3: Gas Fee Tracker
+  const gasData = {
+    labels: blocks.map((block) => new Date(block.timestamp).toLocaleTimeString()),
     datasets: [
       {
-        label: 'Gas Fees (ETH)',
-        data: gasFees,
-        borderColor: 'rgba(59, 130, 246, 1)',
-        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        label: 'Gas Used (Gwei)',
+        data: blocks.map((block) => parseFloat(block.gasUsed)),
+        borderColor: 'rgba(236, 72, 153, 1)',
+        backgroundColor: 'rgba(236, 72, 153, 0.2)',
         fill: true,
         tension: 0.4,
       },
     ],
   };
 
-  const blockTimes = blocks.slice(1).map((block, i) => (block.timestamp - blocks[i].timestamp) / 1000);
+  const gasOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' as const, labels: { color: '#E5E7EB' } },
+      title: { display: false },
+    },
+    scales: {
+      x: { ticks: { color: '#E5E7EB' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+      y: { ticks: { color: '#E5E7EB' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+    },
+  };
+
+  // Feature 7: Block Time Trend Chart
   const blockTimeData = {
-    labels: blocks.slice(1).map((block) => block.number.toString()),
+    labels: blocks.map((block) => new Date(block.timestamp).toLocaleTimeString()),
     datasets: [
       {
-        label: 'Block Time (seconds)',
-        data: blockTimes,
+        label: 'Block Time (s)',
+        data: blocks.map((block) => parseFloat(block.blockTime)),
         borderColor: 'rgba(139, 92, 246, 1)',
         backgroundColor: 'rgba(139, 92, 246, 0.2)',
         fill: true,
@@ -63,64 +75,28 @@ const BlockExplorer: React.FC = () => {
     ],
   };
 
-  const chartOptions = {
+  const blockTimeOptions = {
     responsive: true,
-    plugins: { legend: { position: 'top' as const, labels: { color: '#E5E7EB' } }, title: { display: false } },
-    scales: { x: { ticks: { color: '#E5E7EB' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }, y: { ticks: { color: '#E5E7EB' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, beginAtZero: true } },
-  };
-
-  const barChartData = {
-    labels: blocks.map((block) => block.number.toString()),
-    datasets: [
-      {
-        label: 'Transactions per Block',
-        data: blocks.map(() => Math.floor(Math.random() * 10) + 1),
-        backgroundColor: 'rgba(139, 92, 246, 0.6)',
-        borderColor: 'rgba(139, 92, 246, 1)',
-        borderWidth: 1,
-      },
-    ],
+    plugins: {
+      legend: { position: 'top' as const, labels: { color: '#E5E7EB' } },
+      title: { display: false },
+    },
+    scales: {
+      x: { ticks: { color: '#E5E7EB' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+      y: { ticks: { color: '#E5E7EB' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+    },
   };
 
   return (
-    <motion.div
-      className="space-y-4"
-      initial="hidden"
-      animate="visible"
-      variants={fadeIn}
-    >
+    <motion.div className="space-y-4" initial="hidden" animate="visible" variants={fadeIn}>
       <h2 className="text-2xl font-bold text-white text-shadow-glow">Block Explorer</h2>
       <div className="bg-gray-900/50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold text-white text-shadow-glow mb-2">Gas Fees per Block</h3>
-        <Line data={gasChartData} options={chartOptions} />
+        <h3 className="text-lg font-semibold text-white text-shadow-glow mb-2">Gas Fee Tracker</h3>
+        <Line data={gasData} options={gasOptions} />
       </div>
       <div className="bg-gray-900/50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold text-white text-shadow-glow mb-2">Block Time Intervals</h3>
-        <Line data={blockTimeData} options={chartOptions} />
-      </div>
-      <div className="bg-gray-900/50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold text-white text-shadow-glow mb-2">Transactions per Block</h3>
-        <Bar data={barChartData} options={chartOptions} />
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-gray-200">
-          <thead>
-            <tr className="border-b border-gray-700">
-              <th className="py-2 px-4">Block Number</th>
-              <th className="py-2 px-4">Hash</th>
-              <th className="py-2 px-4">Timestamp</th>
-            </tr>
-          </thead>
-          <tbody>
-            {blocks.map((block) => (
-              <tr key={block.hash} className="border-b border-gray-800 hover:bg-gray-800/20">
-                <td className="py-2 px-4">{block.number}</td>
-                <td className="py-2 px-4">{block.hash.slice(0, 6)}...</td>
-                <td className="py-2 px-4">{new Date(block.timestamp).toLocaleTimeString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h3 className="text-lg font-semibold text-white text-shadow-glow mb-2">Block Time Trend</h3>
+        <Line data={blockTimeData} options={blockTimeOptions} />
       </div>
     </motion.div>
   );
