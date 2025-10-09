@@ -3,12 +3,23 @@
 import { Line, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion'; // Import Variants
 import { Block } from '../types';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
 
-const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } } };
+// Explicitly type fadeIn as Variants
+const fadeIn: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: 'easeOut', // Valid easing function
+    },
+  },
+};
 
 const BlockExplorer: React.FC = () => {
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -72,7 +83,12 @@ const BlockExplorer: React.FC = () => {
   };
 
   return (
-    <motion.div className="space-y-4" initial="hidden" animate="visible" variants={fadeIn}>
+    <motion.div
+      className="space-y-4"
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+    >
       <h2 className="text-2xl font-bold text-white text-shadow-glow">Block Explorer</h2>
       <div className="bg-gray-900/50 p-4 rounded-lg">
         <h3 className="text-lg font-semibold text-white text-shadow-glow mb-2">Gas Fees per Block</h3>
@@ -110,4 +126,4 @@ const BlockExplorer: React.FC = () => {
   );
 };
 
-export default BlockExplorer;
+export default BlockExplorer;

@@ -11,10 +11,12 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
+  Tick,
 } from "chart.js";
 import { MatrixController, MatrixElement } from "chartjs-chart-matrix";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Transaction } from "../types";
 
 // Register chart.js and matrix plugin elements
@@ -31,9 +33,17 @@ ChartJS.register(
   MatrixElement
 );
 
-const fadeIn = {
+// Explicitly type fadeIn as Variants
+const fadeIn: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
 };
 
 const TransactionTracker: React.FC = () => {
@@ -81,7 +91,7 @@ const TransactionTracker: React.FC = () => {
     ],
   };
 
-  const pieOptions = {
+  const pieOptions: ChartOptions<"pie"> = {
     responsive: true,
     plugins: {
       legend: { position: "top" as const, labels: { color: "#E5E7EB" } },
@@ -99,57 +109,57 @@ const TransactionTracker: React.FC = () => {
   const maxValue = Math.max(...Object.values(heatmapData), 1);
 
   const matrixData = {
-  datasets: [
-    {
-      label: "Transaction Value Heatmap",
-      data: Array.from({ length: 24 }, (_, hour) => ({
-        x: hour,
-        y: 0,
-        v: heatmapData[hour] || 0,
-      })),
-      backgroundColor: (ctx: any) => {
-        const value = ctx.dataset.data[ctx.dataIndex]?.v || 0;
-        const alpha = value / maxValue;
-        return `rgba(59, 130, 246, ${alpha})`; // ✅ fixed
+    datasets: [
+      {
+        label: "Transaction Value Heatmap",
+        data: Array.from({ length: 24 }, (_, hour) => ({
+          x: hour,
+          y: 0,
+          v: heatmapData[hour] || 0,
+        })),
+        backgroundColor: (ctx: any) => {
+          const value = ctx.dataset.data[ctx.dataIndex]?.v || 0;
+          const alpha = value / maxValue;
+          return `rgba(59, 130, 246, ${alpha})`;
+        },
+        borderColor: "rgba(59, 130, 246, 1)",
+        borderWidth: 1,
+        width: ({ chart }: any) =>
+          chart.chartArea ? chart.chartArea.width / 24 : 0,
+        height: ({ chart }: any) =>
+          chart.chartArea ? chart.chartArea.height : 0,
       },
-      borderColor: "rgba(59, 130, 246, 1)",
-      borderWidth: 1,
-      width: ({ chart }: any) =>
-        chart.chartArea ? chart.chartArea.width / 24 : 0,
-      height: ({ chart }: any) =>
-        chart.chartArea ? chart.chartArea.height : 0,
-    },
-  ],
-};
+    ],
+  };
 
-const matrixOptions = {
-  responsive: true,
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      callbacks: {
-        label: (ctx: any) =>
-          `Hour ${ctx.raw.x}: ${ctx.raw.v.toFixed(2)} ETH`, // ✅ fixed
+  const matrixOptions: ChartOptions<"matrix"> = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx: any) => `Hour ${ctx.raw.x}: ${ctx.raw.v.toFixed(2)} ETH`,
+        },
       },
     },
-  },
-  scales: {
-    x: {
-      type: "linear" as const,
-      min: 0,
-      max: 23,
-      ticks: {
-        stepSize: 1,
-        callback: (value: number) => `${value}:00`, // ✅ fixed
-        color: "#E5E7EB",
+    scales: {
+      x: {
+        type: "linear" as const,
+        min: 0,
+        max: 23,
+        ticks: {
+          stepSize: 1,
+          callback: (_value: number | string, _index: number, _ticks: Tick[]): string =>
+            `${_value}:00`, // Updated to match expected type
+          color: "#E5E7EB",
+        },
+        grid: { color: "rgba(255, 255, 255, 0.1)" },
       },
-      grid: { color: "rgba(255, 255, 255, 0.1)" },
+      y: {
+        display: false,
+      },
     },
-    y: {
-      display: false,
-    },
-  },
-};
+  };
 
   const chartData = {
     labels: filteredTransactions.map((tx) =>
@@ -167,7 +177,7 @@ const matrixOptions = {
     ],
   };
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     plugins: {
       legend: { position: "top" as const, labels: { color: "#E5E7EB" } },
@@ -221,6 +231,9 @@ const matrixOptions = {
 
       {/* Line chart */}
       <div className="bg-gray-900/50 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold text-white text-shadow-glow mb-2">
+          Transaction Value Over Time
+        </h3>
         <Line data={chartData} options={chartOptions} />
       </div>
 

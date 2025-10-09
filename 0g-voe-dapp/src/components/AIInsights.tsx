@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion"; // Import Variants
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Transaction } from "../types";
@@ -13,11 +13,27 @@ interface Insight {
   timestamp: number;
 }
 
-const fadeIn = {
+// Explicitly type variants as Variants
+const fadeIn: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut", // Valid easing function
+    },
+  },
 };
-const cardScale = { hover: { scale: 1.05, transition: { duration: 0.3 } } };
+
+const cardScale: Variants = {
+  hover: {
+    scale: 1.05,
+    transition: {
+      duration: 0.3,
+    },
+  },
+};
 
 const AIInsights: React.FC<{ transactions: Transaction[] }> = ({ transactions }) => {
   const { address } = useAccount();
@@ -70,7 +86,12 @@ const AIInsights: React.FC<{ transactions: Transaction[] }> = ({ transactions })
     : insights;
 
   return (
-    <motion.div className="space-y-4" initial="hidden" animate="visible" variants={fadeIn}>
+    <motion.div
+      className="space-y-4"
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+    >
       <h2 className="text-2xl font-bold text-white text-shadow-glow">AI Insights</h2>
 
       {address && (
@@ -98,7 +119,6 @@ const AIInsights: React.FC<{ transactions: Transaction[] }> = ({ transactions })
             onChange={() => setShowAlertsOnly(!showAlertsOnly)}
             className="hidden"
           />
-          {/* ✅ Fixed toggle */}
           <div
             className={`w-10 h-5 rounded-full ${
               showAlertsOnly ? "bg-blue-500" : "bg-gray-600"
