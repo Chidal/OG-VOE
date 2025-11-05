@@ -8,8 +8,7 @@
 
 **0G-VOE (Vision of Onchain Events)** is a decentralized, AI-powered blockchain analytics dashboard built on [0G](https://0g.ai/), the first decentralized AI Layer 1 blockchain. It provides real-time insights into transaction histories, block details, and wallet activities on the 0G network, enhanced by AI-driven summarization, anomaly detection, and predictive analytics. Leveraging 0G’s modular infrastructure—**0G Chain**, **0G Compute**, **0G Storage**, and **0G Data Availability (DA)**—the app delivers a censorship-resistant, scalable, and user-friendly platform for monitoring onchain activities. With a degen-style UI built using **Next.js**, **Tailwind CSS**, and **TypeScript**, 0G-VOE makes blockchain data accessible and engaging, aligning with 0G’s mission to democratize AI as a public good.
 
-This project is part of the 0G WaveHack challenge, focusing on the Dapps track. The current implementation covers **Wave 2** (real-time analytics and initial AI integration) and **Wave 3** (enhanced AI insights and scalability), with a clear roadmap for future development.
-
+The smart contract for OGVOE was successfully built and deployed to the Mainnet and integrated. The contract is live at 0xd9aC52cCaD325f96398A06ADad409B30b3768d24, confirmed with 6 blocks. Verification is queued post-API key setup. https://explorer.0g.ai/address/0xd9aC52cCaD325f96398A06ADad409B30b3768d24 
 ---
 
 ## Features
