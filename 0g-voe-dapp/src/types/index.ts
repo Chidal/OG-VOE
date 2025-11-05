@@ -1,12 +1,13 @@
 export interface Transaction {
-    hash: string;
-    from: string;
-    to: string;
-    value: string;
-    token: string;
-    timestamp: number;
+  hash: string;
+  from: string;
+  to: string | null;
+  value: string;
+  gasUsed: string;
+  blockNumber: number;
+  timestamp: number;
+  method?: string;
 }
-
 export interface Block {
     number: number;
     hash: string;

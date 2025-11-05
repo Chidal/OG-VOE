@@ -2,3 +2,6 @@ node_modules
 dist
 .env
 leaderboard.db
+
+/0g-voe-dapp/node_modules/
+/0g-voe-dapp/.next/

@@ -1,26 +1,23 @@
+
+
 import '../styles/globals.css';
-import { Inter } from 'next/font/google';
-import { WagmiProvider, createConfig, http } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
-const config = createConfig({
-  chains: [mainnet],
-  transports: {
-    [mainnet.id]: http(),
-  },
-});
+export const metadata = {
+  title: "0G-VOE",
+  description: "AI-Powered 0G Chain Analytics",
+};
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <WagmiProvider config={config}>
-          <RainbowKitProvider>{children}</RainbowKitProvider>
-        </WagmiProvider>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

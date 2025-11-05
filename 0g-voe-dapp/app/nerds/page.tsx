@@ -149,12 +149,12 @@ const DevDashboard: React.FC = () => {
                   </tr>
                 ))}
               </tbody>
-            </table>
+                          </table>
+            </div>
           </div>
-        </div>
-      </motion.div>
-    </motion.div>
+          </div>
+        </motion.div>
   );
-};
+}
 
 export default DevDashboard;
